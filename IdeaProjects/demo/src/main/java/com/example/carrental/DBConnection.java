@@ -17,4 +17,12 @@ public class DBConnection {
             throw new SQLException("MySQL JDBC Driver not found.", e);
         }
     }
+
+    public static void main(String[] args) {
+        try (Connection conn = getConnection()) {
+            System.out.println("Connection successful!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

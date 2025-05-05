@@ -9,6 +9,8 @@ import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 import com.example.carrental.SceneSwitcher;
+import com.example.carrental.DBConnection;
+import java.sql.*;
 
 public class loginController {
     @FXML private TextField usernameField;
@@ -20,17 +22,27 @@ public class loginController {
     private void handleLogin(ActionEvent event) {
         String username = usernameField.getText();
         String password = passwordField.getText();
-        // TODO: Add authentication logic here
-        if (username.equals("admin") && password.equals("admin")) {
-            errorLabel.setText("Login successful!");
-            try {
+
+        try (Connection conn = DBConnection.getConnection()) {
+            String sql = "SELECT role FROM users WHERE username=? AND password=?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String role = rs.getString("role");
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                SceneSwitcher.switchScene(stage, "/com/example/carrental/dashboard.fxml");
-            } catch (Exception e) {
-                errorLabel.setText("Failed to load dashboard.");
+                if ("admin".equalsIgnoreCase(role)) {
+                    SceneSwitcher.switchScene(stage, "/com/example/carrental/adminDashboard.fxml");
+                } else {
+                    SceneSwitcher.switchScene(stage, "/com/example/carrental/userDashboard.fxml");
+                }
+            } else {
+                errorLabel.setText("Invalid credentials.");
             }
-        } else {
-            errorLabel.setText("Invalid credentials.");
+        } catch (SQLException e) {
+            errorLabel.setText("Database error: " + e.getMessage());
         }
     }
 }
