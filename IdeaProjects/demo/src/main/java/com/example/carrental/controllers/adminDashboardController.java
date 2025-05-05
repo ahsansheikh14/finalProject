@@ -13,6 +13,8 @@ import com.example.carrental.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.carrental.dsa.carTree;
+import com.example.carrental.models.car;
 
 public class adminDashboardController {
     @FXML private TableView<Car> carsTable;
@@ -22,6 +24,8 @@ public class adminDashboardController {
     @FXML private TableColumn<Car, Double> priceColumn;
     @FXML private TableColumn<Car, String> statusColumn;
     @FXML private Label statusLabel;
+
+    private carTree carTreeDSA = new carTree(); // DSA for in-memory car management
 
     @FXML
     public void initialize() {
@@ -38,16 +42,29 @@ public class adminDashboardController {
 
     @FXML
     private void handleAddCar(ActionEvent event) {
-        try {
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            SceneSwitcher.switchScene(stage, "/com/example/carrental/addCar.fxml");
-        } catch (Exception e) {
-            statusLabel.setText("Error loading add car form: " + e.getMessage());
+        // Example: Add a car to both DB and carTreeDSA
+        // You would get these values from a form in a real app
+        car newCar = new car(0, "ModelX", "BrandY", 2024, 100.0, "Available");
+        carTreeDSA.insert(newCar); // Add to DSA
+        // Add to DB (you can use your addCarController logic here)
+        try (Connection conn = DBConnection.getConnection()) {
+            String sql = "INSERT INTO cars (model, brand, year, price_per_day, status) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, newCar.getModel());
+            pstmt.setString(2, newCar.getBrand());
+            pstmt.setInt(3, newCar.getYear());
+            pstmt.setDouble(4, newCar.getPricePerDay());
+            pstmt.setString(5, newCar.getStatus());
+            pstmt.executeUpdate();
+            statusLabel.setText("Car added to DB and DSA!");
+        } catch (SQLException e) {
+            statusLabel.setText("Error adding car: " + e.getMessage());
         }
     }
 
     @FXML
     private void handleViewCars(ActionEvent event) {
+        // Load from DB and populate carTreeDSA
         try {
             Connection conn = DBConnection.getConnection();
             String sql = "SELECT * FROM cars";
@@ -55,20 +72,23 @@ public class adminDashboardController {
             ResultSet rs = pstmt.executeQuery();
 
             List<Car> cars = new ArrayList<>();
+            carTreeDSA = new carTree(); // Reset tree
             while (rs.next()) {
-                Car car = new Car(
-                    rs.getString("make"),
+                car c = new car(
+                    rs.getInt("id"),
                     rs.getString("model"),
+                    rs.getString("brand"),
                     rs.getInt("year"),
-                    rs.getDouble("price"),
+                    rs.getDouble("price_per_day"),
                     rs.getString("status")
                 );
-                cars.add(car);
+                cars.add(new Car(c.getBrand(), c.getModel(), c.getYear(), c.getPricePerDay(), c.getStatus()));
+                carTreeDSA.insert(c); // Add to DSA
             }
 
             ObservableList<Car> carData = FXCollections.observableArrayList(cars);
             carsTable.setItems(carData);
-            statusLabel.setText("Cars loaded successfully");
+            statusLabel.setText("Cars loaded successfully (DB + DSA)");
 
         } catch (SQLException e) {
             statusLabel.setText("Error loading cars: " + e.getMessage());
