@@ -12,6 +12,7 @@ import com.example.carrental.SceneSwitcher;
 import com.example.carrental.models.car;
 import com.example.carrental.models.booking;
 
+
 public class bookingController {
     @FXML private TableView<car> carTable;
     @FXML private TableView<booking> bookingTable;
@@ -19,6 +20,8 @@ public class bookingController {
     @FXML private DatePicker endDatePicker;
     @FXML private Button bookButton;
     @FXML private Button backButton;
+
+
 
     @FXML
     private void handleBook(ActionEvent event) {
