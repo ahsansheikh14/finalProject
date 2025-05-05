@@ -13,6 +13,8 @@ import com.example.carrental.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.example.carrental.dsa.customerLinkedList;
+import com.example.carrental.models.customer;
 
 public class userDashboardController {
     @FXML private TableView<Car> availableCarsTable;
@@ -22,6 +24,8 @@ public class userDashboardController {
     @FXML private TableColumn<Car, Double> priceColumn;
     @FXML private TableColumn<Car, String> actionColumn;
     @FXML private Label statusLabel;
+
+    private customerLinkedList customerListDSA = new customerLinkedList(); // DSA for in-memory customer management
 
     @FXML
     public void initialize() {
@@ -51,6 +55,7 @@ public class userDashboardController {
         
         // Load initial data
         handleViewAvailableCars(null);
+        loadCustomersToDSA();
     }
 
     @FXML
@@ -99,6 +104,27 @@ public class userDashboardController {
             SceneSwitcher.switchScene(stage, "/com/example/carrental/booking.fxml");
         } catch (Exception e) {
             statusLabel.setText("Error starting booking process: " + e.getMessage());
+        }
+    }
+
+    private void loadCustomersToDSA() {
+        // Load customers from DB and populate customerLinkedList
+        try (Connection conn = DBConnection.getConnection()) {
+            String sql = "SELECT * FROM customers";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                customer c = new customer(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("phone"),
+                    rs.getString("license_number"),
+                    rs.getString("password_hash")
+                );
+                customerListDSA.add(c);
+            }
+        } catch (SQLException e) {
+            // Handle error
         }
     }
 

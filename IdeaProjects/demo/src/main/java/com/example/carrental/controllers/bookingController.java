@@ -1,40 +1,47 @@
 package com.example.carrental.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.event.ActionEvent;
-import javafx.scene.Node;
-import javafx.stage.Stage;
-import com.example.carrental.SceneSwitcher;
-import com.example.carrental.models.car;
+import java.sql.*;
+import com.example.carrental.DBConnection;
+import com.example.carrental.dsa.bookingQueue;
 import com.example.carrental.models.booking;
-
+import java.time.LocalDate;
 
 public class bookingController {
-    @FXML private TableView<car> carTable;
-    @FXML private TableView<booking> bookingTable;
+    @FXML private Label carDetailsLabel;
     @FXML private DatePicker startDatePicker;
     @FXML private DatePicker endDatePicker;
-    @FXML private Button bookButton;
-    @FXML private Button backButton;
+    @FXML private Label totalPriceLabel;
+    @FXML private Label statusLabel;
 
-
-
-    @FXML
-    private void handleBook(ActionEvent event) {
-        // TODO: Book selected car for selected dates
-    }
+    private bookingQueue bookingQueueDSA = new bookingQueue(); // DSA for in-memory booking management
 
     @FXML
-    private void handleBack(ActionEvent event) {
-        try {
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            SceneSwitcher.switchScene(stage, "/com/example/carrental/dashboard.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
+    private void handleConfirmBooking(ActionEvent event) {
+        // Example: Create a booking and add to both DSA and DB
+        int carId = 1; // Replace with actual car ID
+        int customerId = 1; // Replace with actual customer ID
+        LocalDate startDate = startDatePicker.getValue();
+        LocalDate endDate = endDatePicker.getValue();
+        double totalCost = 100.0; // Replace with actual calculation
+        booking newBooking = new booking(0, carId, customerId, startDate, endDate, "Confirmed", totalCost);
+        bookingQueueDSA.enqueue(newBooking); // Add to DSA
+        // Add to DB
+        try (Connection conn = DBConnection.getConnection()) {
+            String sql = "INSERT INTO bookings (car_id, customer_id, start_date, end_date, status, total_price) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, carId);
+            pstmt.setInt(2, customerId);
+            pstmt.setDate(3, Date.valueOf(startDate));
+            pstmt.setDate(4, Date.valueOf(endDate));
+            pstmt.setString(5, "Confirmed");
+            pstmt.setDouble(6, totalCost);
+            pstmt.executeUpdate();
+            statusLabel.setText("Booking confirmed (DB + DSA)!");
+        } catch (SQLException e) {
+            statusLabel.setText("Error booking: " + e.getMessage());
         }
     }
 }
