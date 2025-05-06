@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.example.carrental.dsa.carTree;
 import com.example.carrental.models.car;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 
 public class adminDashboardController {
     @FXML private TableView<Car> carsTable;
@@ -42,23 +45,19 @@ public class adminDashboardController {
 
     @FXML
     private void handleAddCar(ActionEvent event) {
-        // Example: Add a car to both DB and carTreeDSA
-        // You would get these values from a form in a real app
-        car newCar = new car(0, "ModelX", "BrandY", 2024, 100.0, "Available");
-        carTreeDSA.insert(newCar); // Add to DSA
-        // Add to DB (you can use your addCarController logic here)
-        try (Connection conn = DBConnection.getConnection()) {
-            String sql = "INSERT INTO cars (model, brand, year, price_per_day, status) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, newCar.getModel());
-            pstmt.setString(2, newCar.getBrand());
-            pstmt.setInt(3, newCar.getYear());
-            pstmt.setDouble(4, newCar.getPricePerDay());
-            pstmt.setString(5, newCar.getStatus());
-            pstmt.executeUpdate();
-            statusLabel.setText("Car added to DB and DSA!");
-        } catch (SQLException e) {
-            statusLabel.setText("Error adding car: " + e.getMessage());
+        try {
+            // Load the addCar.fxml dialog
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/carrental/addCar.fxml"));
+            Parent parent = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Add New Car");
+            stage.setScene(new Scene(parent));
+            stage.initOwner(((Node) event.getSource()).getScene().getWindow());
+            stage.showAndWait();
+            // Refresh the car list after adding
+            handleViewCars(null);
+        } catch (Exception e) {
+            statusLabel.setText("Error opening add car dialog: " + e.getMessage());
         }
     }
 
