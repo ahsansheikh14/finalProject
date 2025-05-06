@@ -21,37 +21,42 @@ public class addCarController {
     @FXML
     private void handleAddCar(ActionEvent event) {
         try {
-            String make = makeField.getText();
+            // Validate input
+            String brand = makeField.getText();
             String model = modelField.getText();
+            if (brand.isEmpty() || model.isEmpty()) {
+                statusLabel.setText("Make and Model cannot be empty");
+                return;
+            }
+
             int year = Integer.parseInt(yearField.getText());
-            double price = Double.parseDouble(priceField.getText());
+            double pricePerDay = Double.parseDouble(priceField.getText());
 
-            // Get database connection
-            Connection conn = DBConnection.getConnection();
-            
-            // Prepare SQL statement
-            String sql = "INSERT INTO cars (make, model, year, price) VALUES (?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, make);
-            pstmt.setString(2, model);
-            pstmt.setInt(3, year);
-            pstmt.setDouble(4, price);
+            // Get database connection and prepare statement
+            try (Connection conn = DBConnection.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(
+                         "INSERT INTO cars (brand, model, year, price_per_day) VALUES (?, ?, ?, ?)"
+                 )) {
+                pstmt.setString(1, brand);
+                pstmt.setString(2, model);
+                pstmt.setInt(3, year);
+                pstmt.setDouble(4, pricePerDay);
 
-            // Execute the statement
-            pstmt.executeUpdate();
-            
-            statusLabel.setText("Car added successfully!");
-            
-            // Clear the fields
-            makeField.clear();
-            modelField.clear();
-            yearField.clear();
-            priceField.clear();
+                // Execute the statement
+                pstmt.executeUpdate();
 
+                statusLabel.setText("Car added successfully!");
+
+                // Clear the fields
+                makeField.clear();
+                modelField.clear();
+                yearField.clear();
+                priceField.clear();
+            }
         } catch (SQLException e) {
             statusLabel.setText("Error adding car: " + e.getMessage());
         } catch (NumberFormatException e) {
             statusLabel.setText("Please enter valid numbers for year and price");
         }
     }
-} 
+}
