@@ -11,6 +11,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import com.example.carrental.DBConnection;
 import com.example.carrental.models.customer;
 import java.io.IOException;
@@ -18,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class manageUsersController {
     @FXML private TableView<customer> usersTable;
@@ -41,9 +45,63 @@ public class manageUsersController {
 
     @FXML
     private void handleAddUser(ActionEvent event) {
-        // This would open a new window to add a user, similar to the car example
-        // For now, we'll just show a status message
-        statusLabel.setText("Add User functionality to be implemented");
+        // Create a series of dialogs to get user information
+        String name = showInputDialog("User Name", "Enter user's full name:");
+        if (name == null) return;
+        
+        String email = showInputDialog("User Email", "Enter user's email:");
+        if (email == null) return;
+        
+        String phone = showInputDialog("User Phone", "Enter user's phone number:");
+        if (phone == null) return;
+        
+        String licenseNo = showInputDialog("User License", "Enter user's license number:");
+        if (licenseNo == null) return;
+        
+        String password = showInputDialog("User Password", "Enter user's password:");
+        if (password == null) return;
+        
+        // Insert the new user into the database
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(
+                 "INSERT INTO customers (name, email, phone, license_number, password_hash) VALUES (?, ?, ?, ?, ?)")) {
+            
+            pstmt.setString(1, name);
+            pstmt.setString(2, email);
+            pstmt.setString(3, phone);
+            pstmt.setString(4, licenseNo);
+            pstmt.setString(5, password);
+            
+            int affected = pstmt.executeUpdate();
+            if (affected > 0) {
+                statusLabel.setText("User added successfully");
+                loadUsers(); // Refresh the table
+            } else {
+                statusLabel.setText("Failed to add user");
+            }
+        } catch (SQLException e) {
+            statusLabel.setText("Error adding user: " + e.getMessage());
+            e.printStackTrace();
+            showAlert(AlertType.ERROR, "Database Error", "Error adding user", e.getMessage());
+        }
+    }
+
+    private String showInputDialog(String title, String content) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle(title);
+        dialog.setHeaderText(null);
+        dialog.setContentText(content);
+        
+        Optional<String> result = dialog.showAndWait();
+        return result.orElse(null);
+    }
+    
+    private void showAlert(AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     @FXML
@@ -84,11 +142,12 @@ public class manageUsersController {
                 customer user = new customer(
                         rs.getInt("id"),
                         rs.getString("name"),
-                        rs.getString("contact"),
-                        rs.getString("license_no"),
-                        rs.getString("password")
+                        rs.getString("phone"),
+                        rs.getString("license_number"),
+                        rs.getString("password_hash")
                 );
                 userList.add(user);
+                System.out.println("Loaded user: " + user.getName() + ", ID: " + user.getCustomerId());
             }
             usersTable.setItems(userList);
             usersTable.refresh(); // Ensure the TableView refreshes
