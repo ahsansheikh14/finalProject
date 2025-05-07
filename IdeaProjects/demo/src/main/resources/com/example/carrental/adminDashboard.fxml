@@ -4,23 +4,23 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
 
-<VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml" 
+<VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.carrental.controllers.adminDashboardController">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
-    
+
     <Label text="Admin Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-    
+
     <HBox spacing="10" alignment="CENTER">
-        <Button text="Add New Car" onAction="#handleAddCar" 
+        <Button text="Add New Car" onAction="#handleAddCar"
                 style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
         <Button text="View All Cars" onAction="#handleViewCars"
                 style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
         <Button text="Manage Users" onAction="#handleManageUsers"
                 style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
     </HBox>
-    
+
     <TableView fx:id="carsTable" VBox.vgrow="ALWAYS">
         <columns>
             <TableColumn fx:id="makeColumn" text="Make"/>
@@ -30,6 +30,6 @@
             <TableColumn fx:id="statusColumn" text="Status"/>
         </columns>
     </TableView>
-    
+
     <Label fx:id="statusLabel"/>
-</VBox> 
+</VBox>
