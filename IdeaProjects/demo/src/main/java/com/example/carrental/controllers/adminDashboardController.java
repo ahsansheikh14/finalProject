@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import com.example.carrental.DBConnection;
 import com.example.carrental.models.car;
+import com.example.carrental.models.customer;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -86,7 +87,18 @@ public class adminDashboardController {
 
     @FXML
     private void handleManageUsers(ActionEvent event) throws IOException {
-        // Placeholder for manage users functionality
-        statusLabel.setText("Manage Users functionality not implemented yet");
+        try {
+            // Load the manageUsers.fxml window
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/carrental/manageUsers.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Manage Users");
+            stage.show();
+            statusLabel.setText("Manage Users window opened");
+        } catch (IOException e) {
+            statusLabel.setText("Error opening Manage Users window: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
