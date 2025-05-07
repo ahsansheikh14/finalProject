@@ -50,28 +50,28 @@ public class adminDashboardController {
 
         // Setup context menu for updating car status
         setupContextMenu();
-        
+
         // Load cars on initialization
         loadCars();
     }
-    
+
     private void setupContextMenu() {
         contextMenu = new ContextMenu();
-        
+
         MenuItem availableItem = new MenuItem("Set Available");
         availableItem.setOnAction(e -> updateCarStatus("Available"));
-        
+
         MenuItem rentedItem = new MenuItem("Set Rented");
         rentedItem.setOnAction(e -> updateCarStatus("Rented"));
-        
+
         MenuItem maintenanceItem = new MenuItem("Set Maintenance");
         maintenanceItem.setOnAction(e -> updateCarStatus("Maintenance"));
-        
+
         MenuItem deleteItem = new MenuItem("Delete Car");
         deleteItem.setOnAction(e -> deleteCar());
-        
+
         contextMenu.getItems().addAll(availableItem, rentedItem, maintenanceItem, deleteItem);
-        
+
         // Add context menu to table on right-click
         carsTable.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) { // Right click
@@ -79,28 +79,28 @@ public class adminDashboardController {
             }
         });
     }
-    
+
     private void deleteCar() {
         car selectedCar = carsTable.getSelectionModel().getSelectedItem();
         if (selectedCar == null) {
             statusLabel.setText("Please select a car to delete");
             return;
         }
-        
+
         // Confirm before deletion
         Alert confirmAlert = new Alert(AlertType.CONFIRMATION);
         confirmAlert.setTitle("Delete Car");
         confirmAlert.setHeaderText("Delete Car Confirmation");
-        confirmAlert.setContentText("Are you sure you want to delete the selected car? \n" + 
-                                   "Make: " + selectedCar.getBrand() + "\n" +
-                                   "Model: " + selectedCar.getModel());
-        
+        confirmAlert.setContentText("Are you sure you want to delete the selected car? \n" +
+                "Make: " + selectedCar.getBrand() + "\n" +
+                "Model: " + selectedCar.getModel());
+
         Optional<ButtonType> result = confirmAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try (Connection conn = DBConnection.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement("DELETE FROM cars WHERE id = ?")) {
                 pstmt.setInt(1, selectedCar.getCarId());
-                
+
                 int affected = pstmt.executeUpdate();
                 if (affected > 0) {
                     statusLabel.setText("Car deleted successfully");
@@ -112,7 +112,7 @@ public class adminDashboardController {
             } catch (SQLException e) {
                 statusLabel.setText("Error deleting car: " + e.getMessage());
                 e.printStackTrace();
-                
+
                 // Show error alert
                 Alert errorAlert = new Alert(AlertType.ERROR);
                 errorAlert.setTitle("Database Error");
@@ -122,19 +122,19 @@ public class adminDashboardController {
             }
         }
     }
-    
+
     private void updateCarStatus(String newStatus) {
         car selectedCar = carsTable.getSelectionModel().getSelectedItem();
         if (selectedCar == null) {
             statusLabel.setText("Please select a car to update status");
             return;
         }
-        
+
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement("UPDATE cars SET status = ? WHERE id = ?")) {
             pstmt.setString(1, newStatus);
             pstmt.setInt(2, selectedCar.getCarId());
-            
+
             int affected = pstmt.executeUpdate();
             if (affected > 0) {
                 statusLabel.setText("Car status updated to: " + newStatus);
