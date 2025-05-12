@@ -35,6 +35,8 @@ public class adminDashboardController {
     @FXML private TableColumn<car, String> modelColumn;
     @FXML private TableColumn<car, Integer> yearColumn;
     @FXML private TableColumn<car, Double> priceColumn;
+    @FXML private TableColumn<car, Integer> seatsColumn;
+    @FXML private TableColumn<car, Boolean> specialColumn;
     @FXML private TableColumn<car, String> statusColumn;
     @FXML private Label statusLabel;
     private ContextMenu contextMenu;
@@ -46,6 +48,8 @@ public class adminDashboardController {
         modelColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getModel()));
         yearColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getYear()).asObject());
         priceColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getPricePerDay()).asObject());
+        seatsColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSeats()).asObject());
+        specialColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isSpecial()));
         statusColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getStatus()));
 
         // Setup context menu for updating car status
@@ -167,10 +171,12 @@ public class adminDashboardController {
                         rs.getString("brand"),
                         rs.getInt("year"),
                         rs.getDouble("price_per_day"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getInt("seats"),
+                        rs.getBoolean("is_special")
                 );
                 carList.add(car);
-                System.out.println("Loaded car: " + car.getBrand() + " " + car.getModel());
+                System.out.println("Loaded car: " + car.getBrand() + " " + car.getModel() + " (Seats: " + car.getSeats() + ", Special: " + car.isSpecial() + ")");
             }
             carsTable.setItems(carList);
             System.out.println("Set " + carList.size() + " items to TableView");
@@ -178,6 +184,7 @@ public class adminDashboardController {
             statusLabel.setText("Loaded " + carList.size() + " cars successfully");
         } catch (SQLException e) {
             statusLabel.setText("Error loading cars: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

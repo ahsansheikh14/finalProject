@@ -14,6 +14,11 @@
     <TextField fx:id="modelField" promptText="Model"/>
     <TextField fx:id="yearField" promptText="Year"/>
     <TextField fx:id="priceField" promptText="Price per day"/>
+
+    <ComboBox fx:id="seatsComboBox" promptText="Select Number of Seats"/>
+
+    <CheckBox fx:id="specialCarCheckBox" text="Special Car (High Rent)"/>
+
     <Button fx:id="submitButton" text="Add Car" onAction="#handleAddCar"
             style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
     <Label fx:id="statusLabel" wrapText="true"/>

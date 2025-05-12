@@ -27,6 +27,8 @@
             <TableColumn fx:id="modelColumn" text="Model"/>
             <TableColumn fx:id="yearColumn" text="Year"/>
             <TableColumn fx:id="priceColumn" text="Price"/>
+            <TableColumn fx:id="seatsColumn" text="Seats"/>
+            <TableColumn fx:id="specialColumn" text="Special"/>
             <TableColumn fx:id="statusColumn" text="Status"/>
         </columns>
     </TableView>
