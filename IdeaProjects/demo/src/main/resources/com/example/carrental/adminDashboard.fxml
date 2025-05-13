@@ -19,19 +19,59 @@
                 style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
         <Button text="Manage Users" onAction="#handleManageUsers"
                 style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
+        <Button text="View Payments" onAction="#handleViewPayments"
+                style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
     </HBox>
 
-    <TableView fx:id="carsTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="makeColumn" text="Make"/>
-            <TableColumn fx:id="modelColumn" text="Model"/>
-            <TableColumn fx:id="yearColumn" text="Year"/>
-            <TableColumn fx:id="priceColumn" text="Price"/>
-            <TableColumn fx:id="seatsColumn" text="Seats"/>
-            <TableColumn fx:id="specialColumn" text="Special"/>
-            <TableColumn fx:id="statusColumn" text="Status"/>
-        </columns>
-    </TableView>
+    <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
+        <Tab text="Cars">
+            <content>
+                <VBox spacing="10">
+                    <!-- Car Seat Filter Buttons -->
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button fx:id="allCarsButton" text="All Cars" onAction="#handleViewCars"
+                                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                        <Button fx:id="fourSeaterButton" text="4-Seater Cars" onAction="#handleViewFourSeaters"
+                                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                        <Button fx:id="fivePlusSeaterButton" text="5+ Seater Cars" onAction="#handleViewFivePlusSeaters"
+                                style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
+                    </HBox>
+                    <TableView fx:id="carsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="makeColumn" text="Make"/>
+                            <TableColumn fx:id="modelColumn" text="Model"/>
+                            <TableColumn fx:id="yearColumn" text="Year"/>
+                            <TableColumn fx:id="priceColumn" text="Price"/>
+                            <TableColumn fx:id="seatsColumn" text="Seats"/>
+                            <TableColumn fx:id="specialColumn" text="Special"/>
+                            <TableColumn fx:id="statusColumn" text="Status"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </content>
+        </Tab>
+        <Tab text="Payment Tracking">
+            <content>
+                <VBox spacing="10">
+                    <TableView fx:id="bookingsTable" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="bookingIdColumn" text="Booking ID"/>
+                            <TableColumn fx:id="customerNameColumn" text="Customer"/>
+                            <TableColumn fx:id="carInfoColumn" text="Car Info"/>
+                            <TableColumn fx:id="startDateColumn" text="Start Date"/>
+                            <TableColumn fx:id="endDateColumn" text="End Date"/>
+                            <TableColumn fx:id="bookingStatusColumn" text="Status"/>
+                            <TableColumn fx:id="originalAmountColumn" text="Original Amount"/>
+                            <TableColumn fx:id="lateFeeColumn" text="Late Fee"/>
+                            <TableColumn fx:id="totalAmountColumn" text="Total"/>
+                            <TableColumn fx:id="paymentStatusColumn" text="Payment Status"/>
+                            <TableColumn fx:id="actionColumn" text="Actions"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </content>
+        </Tab>
+    </TabPane>
 
     <Label fx:id="statusLabel"/>
 </VBox>

@@ -18,12 +18,12 @@ import com.example.carrental.models.customer;
 import com.example.carrental.models.car;
 
 public class userDashboardController {
-    @FXML private TableView<Car> availableCarsTable;
-    @FXML private TableColumn<Car, String> makeColumn;
-    @FXML private TableColumn<Car, String> modelColumn;
-    @FXML private TableColumn<Car, Integer> yearColumn;
-    @FXML private TableColumn<Car, Double> priceColumn;
-    @FXML private TableColumn<Car, Button> actionColumn;
+    @FXML private TableView<car> availableCarsTable;
+    @FXML private TableColumn<car, String> makeColumn;
+    @FXML private TableColumn<car, String> modelColumn;
+    @FXML private TableColumn<car, Integer> yearColumn;
+    @FXML private TableColumn<car, Double> priceColumn;
+    @FXML private TableColumn<car, Button> actionColumn;
     @FXML private Label statusLabel;
 
     private int currentUserId = 1; // This should be set based on logged-in user
@@ -31,19 +31,19 @@ public class userDashboardController {
 
     @FXML
     public void initialize() {
-        // Set up table columns
-        makeColumn.setCellValueFactory(new PropertyValueFactory<>("make"));
+        // Set up table columns with the correct property names from car.java
+        makeColumn.setCellValueFactory(new PropertyValueFactory<>("brand"));
         modelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
         yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
-        priceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        priceColumn.setCellValueFactory(new PropertyValueFactory<>("pricePerDay"));
 
         // Set up action column with booking button
-        actionColumn.setCellFactory(col -> new TableCell<Car, Button>() {
+        actionColumn.setCellFactory(col -> new TableCell<car, Button>() {
             private final Button bookButton = new Button("Book Now");
 
             {
                 bookButton.setOnAction(event -> {
-                    Car car = getTableView().getItems().get(getIndex());
+                    car car = getTableView().getItems().get(getIndex());
                     handleBookCar(car);
                 });
                 bookButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
@@ -76,12 +76,12 @@ public class userDashboardController {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
 
-            List<Car> cars = new ArrayList<>();
+            List<car> cars = new ArrayList<>();
             while (rs.next()) {
-                Car car = new Car(
+                car car = new car(
                         rs.getInt("id"),
-                        rs.getString("brand"),
                         rs.getString("model"),
+                        rs.getString("brand"),
                         rs.getInt("year"),
                         rs.getDouble("price_per_day"),
                         rs.getString("status")
@@ -89,7 +89,7 @@ public class userDashboardController {
                 cars.add(car);
             }
 
-            ObservableList<Car> carData = FXCollections.observableArrayList(cars);
+            ObservableList<car> carData = FXCollections.observableArrayList(cars);
             availableCarsTable.setItems(carData);
 
             if (cars.isEmpty()) {
@@ -115,9 +115,8 @@ public class userDashboardController {
         }
     }
 
-    private void handleBookCar(Car car) {
+    private void handleBookCar(car car) {
         // Store the selected car data in a session or static variable that the booking controller can access
-        // For simplicity, we'll just pass the car ID through SceneSwitcher or a custom method
         try {
             // Store selected car ID for booking form
             selectedCarForBooking = car;
@@ -156,32 +155,5 @@ public class userDashboardController {
     }
 
     // Static variable to pass car info between controllers
-    public static Car selectedCarForBooking;
-
-    // Car class to represent car data
-    public static class Car {
-        private int id;
-        private String make;
-        private String model;
-        private int year;
-        private double price;
-        private String status;
-
-        public Car(int id, String make, String model, int year, double price, String status) {
-            this.id = id;
-            this.make = make;
-            this.model = model;
-            this.year = year;
-            this.price = price;
-            this.status = status;
-        }
-
-        // Getters
-        public int getId() { return id; }
-        public String getMake() { return make; }
-        public String getModel() { return model; }
-        public int getYear() { return year; }
-        public double getPrice() { return price; }
-        public String getStatus() { return status; }
-    }
+    public static car selectedCarForBooking;
 } 
