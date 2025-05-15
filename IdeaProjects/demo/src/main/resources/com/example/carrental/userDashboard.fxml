@@ -5,12 +5,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.Scene?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" 
       fx:controller="com.example.carrental.controllers.userDashboardController">
     
     <top>
-        <VBox spacing="10">
+        <VBox spacing="10" styleClass="dashboard-root" fx:id="rootVBox">
             <padding>
                 <Insets top="20" right="20" bottom="10" left="20"/>
             </padding>

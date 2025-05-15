@@ -49,6 +49,8 @@ public class userDashboardController {
     private int currentUserId = 1; // This will be set from loginController
     private customerLinkedList customerListDSA = new customerLinkedList(); // DSA for in-memory customer management
 
+    @FXML private VBox rootVBox;
+
     @FXML
     public void initialize() {
         // Set up table columns with the correct property names from car.java
@@ -99,6 +101,12 @@ public class userDashboardController {
         });
 
         // Initial data will be loaded when setCurrentUser is called from loginController
+
+        javafx.application.Platform.runLater(() -> {
+            if (rootVBox.getScene() != null && rootVBox.getScene().getStylesheets() != null) {
+                rootVBox.getScene().getStylesheets().add(getClass().getResource("/com/example/carrental/dashboard.css").toExternalForm());
+            }
+        });
     }
 
     private void loadAllCars() {

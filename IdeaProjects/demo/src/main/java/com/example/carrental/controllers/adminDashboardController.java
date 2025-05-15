@@ -112,6 +112,8 @@ public class adminDashboardController {
 
     @FXML private TabPane mainTabPane;
 
+    @FXML private VBox rootVBox;
+
     @FXML
     private void initialize() {
         // Initialize car table columns as before
@@ -154,6 +156,12 @@ public class adminDashboardController {
             } catch (Exception e) {
                 System.out.println("Error initializing tabs: " + e.getMessage());
                 e.printStackTrace();
+            }
+        });
+
+        Platform.runLater(() -> {
+            if (rootVBox.getScene() != null && rootVBox.getScene().getStylesheets() != null) {
+                rootVBox.getScene().getStylesheets().add(getClass().getResource("/com/example/carrental/dashboard.css").toExternalForm());
             }
         });
     }

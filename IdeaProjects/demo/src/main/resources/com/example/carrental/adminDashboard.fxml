@@ -6,9 +6,13 @@
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Separator?>
 
 <VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.carrental.controllers.adminDashboardController">
+      fx:controller="com.example.carrental.controllers.adminDashboardController"
+      styleClass="dashboard-root"
+      fx:id="rootVBox">
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
@@ -65,7 +69,7 @@
                     </HBox>
 
                     <!-- Analytics Section (minimal, safe) -->
-                    <BarChart fx:id="revenueChart" title="Revenue Analytics">
+                    <BarChart fx:id="revenueChart" title="Revenue Analytics" prefHeight="80">
                         <xAxis>
                             <CategoryAxis fx:id="periodAxis" label="Period" />
                         </xAxis>
@@ -73,17 +77,8 @@
                             <NumberAxis fx:id="amountAxis" label="Amount ($)" />
                         </yAxis>
                     </BarChart>
-                    <HBox spacing="20" alignment="CENTER_LEFT">
-                        <Label text="Total Revenue:" />
-                        <Label fx:id="totalRevenueLabel" text="0.00" style="-fx-font-weight: bold;"/>
-                        <Label text="Completed Bookings:" />
-                        <Label fx:id="completedBookingsLabel" text="0" style="-fx-font-weight: bold;"/>
-                        <Label text="Pending Payments:" />
-                        <Label fx:id="pendingPaymentsLabel" text="0.00" style="-fx-font-weight: bold;"/>
-                        <Label text="Late Fees:" />
-                        <Label fx:id="lateFeesLabel" text="0.00" style="-fx-font-weight: bold;"/>
-                    </HBox>
-                    <TableView fx:id="analyticsTable" prefHeight="180">
+                    <Separator />
+                    <TableView fx:id="analyticsTable" prefHeight="180" minHeight="120" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="analyticsPeriodColumn" text="Period" />
                             <TableColumn fx:id="totalRevenueColumn" text="Revenue" />
