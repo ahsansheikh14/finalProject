@@ -3,6 +3,9 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
 
 <VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.carrental.controllers.adminDashboardController">
@@ -21,6 +24,7 @@
                 style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
         <Button text="View Payments" onAction="#handleViewPayments"
                 style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
+        <Button text="Logout" style="-fx-background-color: #f44336; -fx-text-fill: white;" onAction="#handleLogout"/>
     </HBox>
 
     <TabPane fx:id="mainTabPane" VBox.vgrow="ALWAYS" tabClosingPolicy="UNAVAILABLE">
@@ -53,6 +57,12 @@
         <Tab text="Payment Tracking">
             <content>
                 <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Button text="Daily Payment Report" onAction="#handleViewDailyAnalytics"
+                                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                        <Button text="Weekly Payment Report" onAction="#handleViewWeeklyAnalytics"
+                                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                    </HBox>
                     <TableView fx:id="bookingsTable" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="bookingIdColumn" text="Booking ID"/>

@@ -5,6 +5,7 @@ module com.example.carrental {
 
     opens com.example.carrental to javafx.fxml;
     opens com.example.carrental.controllers to javafx.fxml;
+    opens com.example.carrental.models to javafx.base;
     exports com.example.carrental;
     exports com.example.carrental.controllers to javafx.fxml;
 

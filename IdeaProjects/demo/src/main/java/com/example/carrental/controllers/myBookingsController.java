@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Optional;
 import com.example.carrental.dsa.bookingQueue;
 import com.example.carrental.models.booking;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import com.example.carrental.models.BookingEntry;
 
 public class myBookingsController {
     @FXML private TableView<BookingEntry> bookingsTable;
@@ -25,6 +29,8 @@ public class myBookingsController {
     @FXML private TableColumn<BookingEntry, Date> startDateColumn;
     @FXML private TableColumn<BookingEntry, Date> endDateColumn;
     @FXML private TableColumn<BookingEntry, Double> totalPriceColumn;
+    @FXML private TableColumn<BookingEntry, Double> paymentAmountColumn;
+    @FXML private TableColumn<BookingEntry, String> paymentStatusColumn;
     @FXML private TableColumn<BookingEntry, String> statusColumn;
     @FXML private TableColumn<BookingEntry, String> actionColumn;
     @FXML private Label statusLabel;
@@ -40,6 +46,8 @@ public class myBookingsController {
         startDateColumn.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         endDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
         totalPriceColumn.setCellValueFactory(new PropertyValueFactory<>("totalPrice"));
+        paymentAmountColumn.setCellValueFactory(new PropertyValueFactory<>("paymentAmount"));
+        paymentStatusColumn.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         // Set up action column with cancel button
@@ -57,10 +65,15 @@ public class myBookingsController {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableView().getItems().get(getIndex()).getStatus().equals("Cancelled")) {
+                if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(cancelButton);
+                    BookingEntry booking = getTableView().getItems().get(getIndex());
+                    if ("Ongoing".equalsIgnoreCase(booking.getStatus())) {
+                        setGraphic(cancelButton);
+                    } else {
+                        setGraphic(null);
+                    }
                 }
             }
         });
@@ -71,8 +84,9 @@ public class myBookingsController {
 
     private void loadBookings() {
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT b.*, c.brand, c.model, c.year FROM bookings b " +
+            String sql = "SELECT b.*, c.brand, c.model, c.year, p.amount AS payment_amount, p.status AS payment_status FROM bookings b " +
                     "JOIN cars c ON b.car_id = c.id " +
+                    "LEFT JOIN payments p ON b.id = p.booking_id " +
                     "WHERE b.customer_id = ? " +
                     "ORDER BY b.start_date DESC";
 
@@ -88,9 +102,12 @@ public class myBookingsController {
                         rs.getDate("start_date"),
                         rs.getDate("end_date"),
                         rs.getDouble("total_price"),
-                        rs.getString("status")
+                        rs.getString("status"),
+                        rs.getDouble("payment_amount"),
+                        rs.getString("payment_status")
                 );
                 bookings.add(entry);
+                System.out.println("Loaded booking: " + entry.getBookingId() + " | " + entry.getCarInfo() + " | " + entry.getStartDate() + " - " + entry.getEndDate());
 
                 // Also add to our DSA for practice
                 booking b = new booking(
@@ -104,6 +121,7 @@ public class myBookingsController {
                 );
                 bookingQueueDSA.enqueue(b);
             }
+            System.out.println("Total bookings loaded: " + bookings.size());
 
             ObservableList<BookingEntry> bookingData = FXCollections.observableArrayList(bookings);
             bookingsTable.setItems(bookingData);
@@ -153,7 +171,14 @@ public class myBookingsController {
     private void handleBackToDashboard(ActionEvent event) {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            SceneSwitcher.switchScene(stage, "/com/example/carrental/userDashboard.fxml");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/carrental/userDashboard.fxml"));
+            Parent root = loader.load();
+            userDashboardController controller = loader.getController();
+            controller.setCurrentUser(currentUserId);
+            Scene scene = new Scene(root, 1000, 700);
+            stage.setScene(scene);
+            stage.setTitle("Car Rental System - User Dashboard");
+            stage.show();
         } catch (Exception e) {
             statusLabel.setText("Error returning to dashboard: " + e.getMessage());
         }
@@ -164,30 +189,8 @@ public class myBookingsController {
         loadBookings();
     }
 
-    // BookingEntry class for table display
-    public static class BookingEntry {
-        private int bookingId;
-        private String carInfo;
-        private Date startDate;
-        private Date endDate;
-        private double totalPrice;
-        private String status;
-
-        public BookingEntry(int bookingId, String carInfo, Date startDate, Date endDate, double totalPrice, String status) {
-            this.bookingId = bookingId;
-            this.carInfo = carInfo;
-            this.startDate = startDate;
-            this.endDate = endDate;
-            this.totalPrice = totalPrice;
-            this.status = status;
-        }
-
-        // Getters
-        public int getBookingId() { return bookingId; }
-        public String getCarInfo() { return carInfo; }
-        public Date getStartDate() { return startDate; }
-        public Date getEndDate() { return endDate; }
-        public double getTotalPrice() { return totalPrice; }
-        public String getStatus() { return status; }
+    public void setCurrentUser(int userId) {
+        this.currentUserId = userId;
+        loadBookings();
     }
 }

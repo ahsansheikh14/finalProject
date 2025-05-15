@@ -3,31 +3,67 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Region?>
 
-<VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml" 
+<BorderPane xmlns:fx="http://javafx.com/fxml" 
       fx:controller="com.example.carrental.controllers.userDashboardController">
-    <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
-    </padding>
     
-    <Label text="User Dashboard" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="20" right="20" bottom="10" left="20"/>
+            </padding>
+            
+            <HBox spacing="15" alignment="CENTER_LEFT">
+                <Label fx:id="welcomeLabel" text="Welcome, User" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button text="Logout" style="-fx-background-color: #f44336; -fx-text-fill: white;" onAction="#handleLogout"/>
+            </HBox>
+            
+            <Label text="Available Cars" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+            
+            <HBox spacing="10">
+                <Button fx:id="allCarsButton" text="All Cars" 
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                <Button fx:id="fourSeaterButton" text="4 Seater Cars" 
+                        style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
+                <Button fx:id="fivePlusSeaterButton" text="5+ Seater Cars" 
+                        style="-fx-background-color: #FF9800; -fx-text-fill: white;"/>
+                <Button text="My Bookings" onAction="#handleMyBookings"
+                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+            </HBox>
+        </VBox>
+    </top>
     
-    <HBox spacing="10" alignment="CENTER">
-        <Button text="View Available Cars" onAction="#handleViewAvailableCars"
-                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-        <Button text="My Bookings" onAction="#handleMyBookings"
-                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-    </HBox>
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="0" right="20" bottom="10" left="20"/>
+            </padding>
+            
+            <TableView fx:id="availableCarsTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="makeColumn" text="Make" prefWidth="100"/>
+                    <TableColumn fx:id="modelColumn" text="Model" prefWidth="120"/>
+                    <TableColumn fx:id="yearColumn" text="Year" prefWidth="60"/>
+                    <TableColumn fx:id="priceColumn" text="Price/Day" prefWidth="90"/>
+                    <TableColumn fx:id="seatsColumn" text="Seats" prefWidth="60"/>
+                    <TableColumn fx:id="specialColumn" text="Special" prefWidth="70"/>
+                    <TableColumn fx:id="statusColumn" text="Status" prefWidth="90"/>
+                    <TableColumn fx:id="actionColumn" text="Action" prefWidth="100"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
     
-    <TableView fx:id="availableCarsTable" VBox.vgrow="ALWAYS">
-        <columns>
-            <TableColumn fx:id="makeColumn" text="Make"/>
-            <TableColumn fx:id="modelColumn" text="Model"/>
-            <TableColumn fx:id="yearColumn" text="Year"/>
-            <TableColumn fx:id="priceColumn" text="Price per Day"/>
-            <TableColumn fx:id="actionColumn" text="Action"/>
-        </columns>
-    </TableView>
+    <bottom>
+        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #f5f5f5;">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <Label fx:id="statusLabel" style="-fx-font-size: 14px;"/>
+        </HBox>
+    </bottom>
     
-    <Label fx:id="statusLabel"/>
-</VBox> 
+</BorderPane> 

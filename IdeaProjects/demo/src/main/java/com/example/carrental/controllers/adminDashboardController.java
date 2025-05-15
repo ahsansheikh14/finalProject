@@ -59,6 +59,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.YearMonth;
+import javafx.scene.Node;
 
 public class adminDashboardController {
     @FXML private TableView<car> carsTable;
@@ -589,6 +590,7 @@ public class adminDashboardController {
             private final Button completeButton = new Button("Complete");
             private final Button confirmReturnButton = new Button("Confirm Return");
             private final Button waivedLateReturnButton = new Button("Late Return - No Fee");
+            private final Button chargeLateReturnButton = new Button("Late Return - Charge Fee");
             private final Button processButton = new Button("Process Payment");
             private final Button cancelButton = new Button("Cancel");
 
@@ -609,6 +611,12 @@ public class adminDashboardController {
                 waivedLateReturnButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     confirmLateReturnWithWaivedFee(booking);
+                });
+                
+                chargeLateReturnButton.setStyle("-fx-background-color: #E91E63; -fx-text-fill: white;");
+                chargeLateReturnButton.setOnAction(e -> {
+                    BookingPaymentData booking = getTableView().getItems().get(getIndex());
+                    confirmLateReturnWithCharge(booking);
                 });
 
                 processButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
@@ -637,9 +645,10 @@ public class adminDashboardController {
                         buttons.getChildren().add(completeButton);
                         buttons.getChildren().add(confirmReturnButton);
 
-                        // Show the waived late return button only if there's a late fee to waive
+                        // Show late return buttons only if there's a late fee to consider
                         if (booking.lateFee > 0) {
                             buttons.getChildren().add(waivedLateReturnButton);
+                            buttons.getChildren().add(chargeLateReturnButton);
                         }
 
                         buttons.getChildren().add(cancelButton);
@@ -1546,6 +1555,74 @@ public class adminDashboardController {
         }
     }
 
+    // Method to handle late return with charge
+    private void confirmLateReturnWithCharge(BookingPaymentData booking) {
+        System.out.println("Attempting to confirm late return with charge for booking #" + booking.bookingId);
+
+        // Confirm before processing
+        Alert confirmAlert = new Alert(AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Confirm Late Return - Apply Fee");
+        confirmAlert.setHeaderText("Confirm Car Returned Late - Apply Late Fee");
+        confirmAlert.setContentText("Confirm that the car was returned late for booking #" + booking.bookingId +
+                " and you want to charge the late fee of $" + String.format("%.2f", booking.lateFee) + "?");
+
+        Optional<ButtonType> result = confirmAlert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try (Connection conn = DBConnection.getConnection()) {
+                // Update the booking to completed status
+                PreparedStatement bookingStmt = conn.prepareStatement(
+                        "UPDATE bookings SET status = 'Completed' WHERE id = ?"
+                );
+                bookingStmt.setInt(1, booking.bookingId);
+                int bookingUpdated = bookingStmt.executeUpdate();
+
+                // Update the car to available
+                PreparedStatement carStmt = conn.prepareStatement(
+                        "UPDATE cars SET status = 'Available' WHERE id = ?"
+                );
+                carStmt.setInt(1, booking.carId);
+                int carUpdated = carStmt.executeUpdate();
+
+                // Check if a payment record exists, if not create one with original amount + late fee
+                PreparedStatement checkPaymentStmt = conn.prepareStatement(
+                        "SELECT id FROM payments WHERE booking_id = ?"
+                );
+                checkPaymentStmt.setInt(1, booking.bookingId);
+                ResultSet rs = checkPaymentStmt.executeQuery();
+
+                if (rs.next()) {
+                    // Update existing payment to include late fee
+                    PreparedStatement updatePaymentStmt = conn.prepareStatement(
+                            "UPDATE payments SET amount = ?, status = 'Pending' WHERE booking_id = ?"
+                    );
+                    updatePaymentStmt.setDouble(1, booking.totalAmount); // Total with late fee
+                    updatePaymentStmt.setInt(2, booking.bookingId);
+                    updatePaymentStmt.executeUpdate();
+                } else {
+                    // Create new payment with late fee included
+                    PreparedStatement insertPaymentStmt = conn.prepareStatement(
+                            "INSERT INTO payments (booking_id, amount, status) VALUES (?, ?, 'Pending')"
+                    );
+                    insertPaymentStmt.setInt(1, booking.bookingId);
+                    insertPaymentStmt.setDouble(2, booking.totalAmount); // Total with late fee
+                    insertPaymentStmt.executeUpdate();
+                }
+
+                statusLabel.setText("Booking #" + booking.bookingId + " completed with late return and fee of $" + 
+                        String.format("%.2f", booking.lateFee) + " applied");
+
+                // Refresh the data
+                loadBookingsWithPaymentInfo();
+                loadCars();
+
+                System.out.println("Late return with fee confirmed for booking #" + booking.bookingId);
+            } catch (SQLException e) {
+                statusLabel.setText("Error processing late return with fee: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
     // Method to load cars filtered by seat capacity
     private void loadCarsBySeats(int minSeats, int maxSeats) {
         ObservableList<car> carList = FXCollections.observableArrayList();
@@ -1611,6 +1688,22 @@ public class adminDashboardController {
             statusLabel.setText("Loaded " + carList.size() + " cars successfully");
         } catch (SQLException e) {
             statusLabel.setText("Error loading cars: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleLogout(ActionEvent event) {
+        try {
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/carrental/login.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root, 400, 400);
+            stage.setScene(scene);
+            stage.setTitle("Car Rental System - Login");
+            stage.show();
+        } catch (Exception e) {
+            statusLabel.setText("Error logging out: " + e.getMessage());
             e.printStackTrace();
         }
     }

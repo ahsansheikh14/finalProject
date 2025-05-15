@@ -112,6 +112,27 @@ public class manageUsersController {
             return;
         }
 
+        // Check for any bookings for this user
+        boolean hasBookings = false;
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement("SELECT COUNT(*) FROM bookings WHERE customer_id = ?")) {
+            checkStmt.setInt(1, selectedUser.getCustomerId());
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                hasBookings = true;
+            }
+        } catch (SQLException e) {
+            statusLabel.setText("Error checking user bookings: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        if (hasBookings) {
+            statusLabel.setText("Cannot delete user: user has existing bookings (including cancelled or completed). Please remove all bookings first.");
+            return;
+        }
+
+        // No bookings, safe to delete
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement("DELETE FROM customers WHERE id = ?")) {
             pstmt.setInt(1, selectedUser.getCustomerId());

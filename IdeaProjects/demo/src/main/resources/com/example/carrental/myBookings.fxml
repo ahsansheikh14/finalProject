@@ -18,6 +18,8 @@
             <TableColumn fx:id="startDateColumn" text="Start Date"/>
             <TableColumn fx:id="endDateColumn" text="End Date"/>
             <TableColumn fx:id="totalPriceColumn" text="Total Price"/>
+            <TableColumn fx:id="paymentAmountColumn" text="Payment Amount"/>
+            <TableColumn fx:id="paymentStatusColumn" text="Payment Status"/>
             <TableColumn fx:id="statusColumn" text="Status"/>
             <TableColumn fx:id="actionColumn" text="Action"/>
         </columns>
