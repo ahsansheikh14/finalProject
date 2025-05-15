@@ -1,0 +1,99 @@
+/* Dashboard CSS - modern, blue, visible, card-based */
+.dashboard-root {
+    -fx-background-color: linear-gradient(to bottom, #e3f0fa 0%, #eaf3fb 100%);
+    -fx-padding: 30 0 30 0;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.card {
+    -fx-background-color: #fff;
+    -fx-background-radius: 16;
+    -fx-border-color: #2196F3;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, #90caf9, 18, 0.25, 0, 4);
+    -fx-padding: 28 32 28 32;
+    -fx-spacing: 18;
+    -fx-max-width: 1200;
+    -fx-alignment: center;
+}
+
+.tab-pane {
+    -fx-background-color: transparent;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: transparent;
+}
+
+.table-view {
+    -fx-background-color: #f7fbff;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-border-color: #2196F3;
+    -fx-border-width: 2;
+    -fx-table-cell-border-color: #bbdefb;
+    -fx-padding: 10;
+}
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #2196F3, #64b5f6);
+    -fx-border-radius: 12 12 0 0;
+}
+.table-view .table-row-cell:filled:selected {
+    -fx-background-color: #bbdefb;
+}
+.table-view .table-row-cell:filled:hover {
+    -fx-background-color: #e3f2fd;
+}
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.button {
+    -fx-background-radius: 10;
+    -fx-font-size: 15px;
+    -fx-padding: 9 28 9 28;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #90caf9, 2, 0.1, 0, 1);
+    -fx-background-color: #2196F3;
+    -fx-text-fill: white;
+    -fx-border-color: #1976d2;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-transition: background-color 0.2s;
+}
+.button:focused {
+    -fx-border-color: #1976d2;
+    -fx-border-width: 2.5;
+}
+.button:hover {
+    -fx-background-color: #1976d2;
+}
+
+.label {
+    -fx-font-size: 15px;
+    -fx-text-fill: #1a237e;
+}
+
+.title-label {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1976d2;
+    -fx-padding: 0 0 18 0;
+}
+
+.summary-row {
+    -fx-background-color: #e3f0fa;
+    -fx-padding: 12 24 12 24;
+    -fx-border-radius: 8;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-spacing: 18;
+    -fx-alignment: center-left;
+    -fx-border-color: #90caf9;
+    -fx-border-width: 1.5;
+    -fx-margin-bottom: 12;
+}
+
+.hbox, .vbox {
+    -fx-spacing: 16;
+} 

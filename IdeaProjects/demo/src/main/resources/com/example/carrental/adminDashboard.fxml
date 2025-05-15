@@ -59,53 +59,69 @@
             </content>
         </Tab>
         <Tab text="Payment Tracking">
-            <content>
-                <VBox spacing="10">
-                    <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Button text="Daily Payment Report" onAction="#handleViewDailyAnalytics"
-                                style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
-                        <Button text="Weekly Payment Report" onAction="#handleViewWeeklyAnalytics"
-                                style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
-                    </HBox>
-
-                    <!-- Analytics Section (minimal, safe) -->
-                    <BarChart fx:id="revenueChart" title="Revenue Analytics" prefHeight="80">
-                        <xAxis>
-                            <CategoryAxis fx:id="periodAxis" label="Period" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis fx:id="amountAxis" label="Amount ($)" />
-                        </yAxis>
-                    </BarChart>
-                    <Separator />
-                    <TableView fx:id="analyticsTable" prefHeight="180" minHeight="120" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="analyticsPeriodColumn" text="Period" />
-                            <TableColumn fx:id="totalRevenueColumn" text="Revenue" />
-                            <TableColumn fx:id="bookingsCountColumn" text="Bookings" />
-                            <TableColumn fx:id="avgBookingValueColumn" text="Avg Value" />
-                            <TableColumn fx:id="lateFeesCollectedColumn" text="Late Fees" />
-                        </columns>
-                    </TableView>
-                    <!-- End Analytics Section -->
-
-                    <TableView fx:id="bookingsTable" VBox.vgrow="ALWAYS">
-                        <columns>
-                            <TableColumn fx:id="bookingIdColumn" text="Booking ID"/>
-                            <TableColumn fx:id="customerNameColumn" text="Customer"/>
-                            <TableColumn fx:id="carInfoColumn" text="Car Info"/>
-                            <TableColumn fx:id="startDateColumn" text="Start Date"/>
-                            <TableColumn fx:id="endDateColumn" text="End Date"/>
-                            <TableColumn fx:id="bookingStatusColumn" text="Status"/>
-                            <TableColumn fx:id="originalAmountColumn" text="Original Amount"/>
-                            <TableColumn fx:id="lateFeeColumn" text="Late Fee"/>
-                            <TableColumn fx:id="totalAmountColumn" text="Total"/>
-                            <TableColumn fx:id="paymentStatusColumn" text="Payment Status"/>
-                            <TableColumn fx:id="actionColumn" text="Actions"/>
-                        </columns>
-                    </TableView>
-                </VBox>
-            </content>
+            <TabPane tabClosingPolicy="UNAVAILABLE">
+                <Tab text="Bookings &amp; Payments">
+                    <content>
+                        <VBox spacing="10">
+                            <TableView fx:id="bookingsTable" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="bookingIdColumn" text="Booking ID"/>
+                                    <TableColumn fx:id="customerNameColumn" text="Customer"/>
+                                    <TableColumn fx:id="carInfoColumn" text="Car Info"/>
+                                    <TableColumn fx:id="startDateColumn" text="Start Date"/>
+                                    <TableColumn fx:id="endDateColumn" text="End Date"/>
+                                    <TableColumn fx:id="bookingStatusColumn" text="Status"/>
+                                    <TableColumn fx:id="originalAmountColumn" text="Original Amount"/>
+                                    <TableColumn fx:id="lateFeeColumn" text="Late Fee"/>
+                                    <TableColumn fx:id="totalAmountColumn" text="Total"/>
+                                    <TableColumn fx:id="paymentStatusColumn" text="Payment Status"/>
+                                    <TableColumn fx:id="actionsColumn" text="Actions"/>
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Revenue Analytics">
+                    <content>
+                        <VBox spacing="10">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Button text="Daily Payment Report" onAction="#handleViewDailyAnalytics"
+                                        style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+                                <Button text="Weekly Payment Report" onAction="#handleViewWeeklyAnalytics"
+                                        style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
+                            </HBox>
+                            <BarChart fx:id="revenueChart" title="Revenue Analytics" prefHeight="80">
+                                <xAxis>
+                                    <CategoryAxis fx:id="periodAxis" label="Period" />
+                                </xAxis>
+                                <yAxis>
+                                    <NumberAxis fx:id="amountAxis" label="Amount ($)" />
+                                </yAxis>
+                            </BarChart>
+                            <HBox spacing="20" alignment="CENTER_LEFT">
+                                <Label text="Total Revenue:" />
+                                <Label fx:id="totalRevenueLabel" text="0.00" style="-fx-font-weight: bold;"/>
+                                <Label text="Completed Bookings:" />
+                                <Label fx:id="completedBookingsLabel" text="0" style="-fx-font-weight: bold;"/>
+                                <Label text="Pending Payments:" />
+                                <Label fx:id="pendingPaymentsLabel" text="0.00" style="-fx-font-weight: bold;"/>
+                                <Label text="Late Fees:" />
+                                <Label fx:id="lateFeesLabel" text="0.00" style="-fx-font-weight: bold;"/>
+                            </HBox>
+                            <Separator />
+                            <TableView fx:id="analyticsTable" prefHeight="180" minHeight="120" VBox.vgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="analyticsPeriodColumn" text="Period" />
+                                    <TableColumn fx:id="totalRevenueColumn" text="Revenue" />
+                                    <TableColumn fx:id="bookingsCountColumn" text="Bookings" />
+                                    <TableColumn fx:id="avgBookingValueColumn" text="Avg Value" />
+                                    <TableColumn fx:id="lateFeesCollectedColumn" text="Late Fees" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+                    </content>
+                </Tab>
+            </TabPane>
         </Tab>
     </TabPane>
 

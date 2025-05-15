@@ -2,9 +2,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import java.lang.String?>
+<?import java.net.URL?>
 
 <VBox alignment="CENTER" spacing="10" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.carrental.controllers.myBookingsController">
+      fx:controller="com.example.carrental.controllers.myBookingsController" fx:id="rootVBox">
+    <stylesheets>
+        <URL value="@dashboard.css"/>
+    </stylesheets>
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
