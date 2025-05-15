@@ -63,6 +63,37 @@
                         <Button text="Weekly Payment Report" onAction="#handleViewWeeklyAnalytics"
                                 style="-fx-background-color: #4CAF50; -fx-text-fill: white;"/>
                     </HBox>
+
+                    <!-- Analytics Section (minimal, safe) -->
+                    <BarChart fx:id="revenueChart" title="Revenue Analytics">
+                        <xAxis>
+                            <CategoryAxis fx:id="periodAxis" label="Period" />
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis fx:id="amountAxis" label="Amount ($)" />
+                        </yAxis>
+                    </BarChart>
+                    <HBox spacing="20" alignment="CENTER_LEFT">
+                        <Label text="Total Revenue:" />
+                        <Label fx:id="totalRevenueLabel" text="0.00" style="-fx-font-weight: bold;"/>
+                        <Label text="Completed Bookings:" />
+                        <Label fx:id="completedBookingsLabel" text="0" style="-fx-font-weight: bold;"/>
+                        <Label text="Pending Payments:" />
+                        <Label fx:id="pendingPaymentsLabel" text="0.00" style="-fx-font-weight: bold;"/>
+                        <Label text="Late Fees:" />
+                        <Label fx:id="lateFeesLabel" text="0.00" style="-fx-font-weight: bold;"/>
+                    </HBox>
+                    <TableView fx:id="analyticsTable" prefHeight="180">
+                        <columns>
+                            <TableColumn fx:id="analyticsPeriodColumn" text="Period" />
+                            <TableColumn fx:id="totalRevenueColumn" text="Revenue" />
+                            <TableColumn fx:id="bookingsCountColumn" text="Bookings" />
+                            <TableColumn fx:id="avgBookingValueColumn" text="Avg Value" />
+                            <TableColumn fx:id="lateFeesCollectedColumn" text="Late Fees" />
+                        </columns>
+                    </TableView>
+                    <!-- End Analytics Section -->
+
                     <TableView fx:id="bookingsTable" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="bookingIdColumn" text="Booking ID"/>

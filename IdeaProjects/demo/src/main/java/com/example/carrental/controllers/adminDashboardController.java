@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.YearMonth;
 import javafx.scene.Node;
+import com.example.carrental.models.PaymentAnalyticsData;
 
 public class adminDashboardController {
     @FXML private TableView<car> carsTable;
@@ -174,11 +175,11 @@ public class adminDashboardController {
         try {
             if (analyticsTable != null && revenueChart != null) {
                 // Configure analytics table
-                analyticsPeriodColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().period));
-                totalRevenueColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().totalRevenue).asObject());
-                bookingsCountColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().bookingsCount).asObject());
-                avgBookingValueColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().avgBookingValue).asObject());
-                lateFeesCollectedColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().lateFees).asObject());
+                analyticsPeriodColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getPeriod()));
+                totalRevenueColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getTotalRevenue()).asObject());
+                bookingsCountColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getBookingsCount()).asObject());
+                avgBookingValueColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getAvgBookingValue()).asObject());
+                lateFeesCollectedColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleDoubleProperty(cellData.getValue().getLateFees()).asObject());
 
                 // Format currency in table cells
                 totalRevenueColumn.setCellFactory(col -> new TableCell<PaymentAnalyticsData, Double>() {
@@ -513,39 +514,6 @@ public class adminDashboardController {
         }
     }
 
-    // Helper class to store payment analytics data for the table
-    private static class PaymentAnalyticsData {
-        private final String period;
-        private final double totalRevenue;
-        private final int bookingsCount;
-        private final double avgBookingValue;
-        private final double lateFees;
-
-        public PaymentAnalyticsData(String period, double totalRevenue, int bookingsCount,
-                                    double avgBookingValue, double lateFees) {
-            this.period = period;
-            this.totalRevenue = totalRevenue;
-            this.bookingsCount = bookingsCount;
-            this.avgBookingValue = avgBookingValue;
-            this.lateFees = lateFees;
-        }
-    }
-
-    // Helper class to store temporary period data during analytics calculation
-    private static class PaymentPeriodData {
-        private final String displayPeriod;
-        private final double revenue;
-        private final int bookingsCount;
-        private final double lateFees;
-
-        public PaymentPeriodData(String displayPeriod, double revenue, int bookingsCount, double lateFees) {
-            this.displayPeriod = displayPeriod;
-            this.revenue = revenue;
-            this.bookingsCount = bookingsCount;
-            this.lateFees = lateFees;
-        }
-    }
-
     private void setupBookingPaymentTable() {
         // Configure the bookings table columns
         bookingIdColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().bookingId).asObject());
@@ -833,7 +801,7 @@ public class adminDashboardController {
                 if (rs.next()) {
                     // Update existing payment
                     PreparedStatement updateStmt = conn.prepareStatement(
-                            "UPDATE payments SET amount = ?, method = ?, status = 'Paid' WHERE booking_id = ?"
+                            "UPDATE payments SET amount = ?, method = ?, status = 'Paid', payment_date = CURRENT_DATE WHERE booking_id = ?"
                     );
                     updateStmt.setDouble(1, booking.totalAmount);
                     updateStmt.setString(2, paymentMethod);
@@ -842,7 +810,7 @@ public class adminDashboardController {
                 } else {
                     // Create new payment
                     PreparedStatement insertStmt = conn.prepareStatement(
-                            "INSERT INTO payments (booking_id, amount, method, status) VALUES (?, ?, ?, 'Paid')"
+                            "INSERT INTO payments (booking_id, amount, method, status, payment_date) VALUES (?, ?, ?, 'Paid', CURRENT_DATE)"
                     );
                     insertStmt.setInt(1, booking.bookingId);
                     insertStmt.setDouble(2, booking.totalAmount);
@@ -854,6 +822,8 @@ public class adminDashboardController {
 
                 // Refresh the data
                 loadBookingsWithPaymentInfo();
+                // Also reload analytics to update revenue and charts
+                handleViewDailyAnalytics(null);
 
             } catch (SQLException e) {
                 statusLabel.setText("Error processing payment: " + e.getMessage());
@@ -1705,6 +1675,21 @@ public class adminDashboardController {
         } catch (Exception e) {
             statusLabel.setText("Error logging out: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    // Re-add PaymentPeriodData class
+    private static class PaymentPeriodData {
+        private final String displayPeriod;
+        private final double revenue;
+        private final int bookingsCount;
+        private final double lateFees;
+
+        public PaymentPeriodData(String displayPeriod, double revenue, int bookingsCount, double lateFees) {
+            this.displayPeriod = displayPeriod;
+            this.revenue = revenue;
+            this.bookingsCount = bookingsCount;
+            this.lateFees = lateFees;
         }
     }
 }

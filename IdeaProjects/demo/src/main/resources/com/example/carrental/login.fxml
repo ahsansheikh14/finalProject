@@ -13,7 +13,7 @@
         <Insets top="20" right="40" bottom="20" left="40"/>
     </padding>
     
-    <Label text="Car Rental System" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2196F3;">
+    <Label text="AA'S Car Rental System" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2196F3;">
         <VBox.margin>
             <Insets bottom="20"/>
         </VBox.margin>
@@ -24,7 +24,7 @@
     <GridPane vgap="10" hgap="10" alignment="CENTER">
         <Label text="Username:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="usernameField" GridPane.rowIndex="0" GridPane.columnIndex="1" 
-                  prefWidth="200" promptText="Username or License Number"/>
+                  prefWidth="200" promptText="Admin name or user email"/>
         
         <Label text="Password:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
         <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1" 
@@ -37,7 +37,7 @@
     
     <Label fx:id="errorLabel" textFill="#f44336" wrapText="true" maxWidth="300" textAlignment="CENTER"/>
     
-    <Label text="Admin login: admin/admin | User login: Test User/user123" 
+    <Label text="Admin login: admin/admin | User login: Test User/user123"
            style="-fx-font-size: 11px; -fx-text-fill: #9e9e9e;" wrapText="true" textAlignment="CENTER">
         <VBox.margin>
             <Insets top="20"/>
