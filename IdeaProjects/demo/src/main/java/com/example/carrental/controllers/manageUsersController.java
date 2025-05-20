@@ -29,6 +29,7 @@ public class manageUsersController {
     @FXML private TableColumn<customer, String> nameColumn;
     @FXML private TableColumn<customer, String> contactColumn;
     @FXML private TableColumn<customer, String> licenseColumn;
+    @FXML private TableColumn<customer, String> emailColumn;
     @FXML private Label statusLabel;
 
     @FXML
@@ -38,6 +39,7 @@ public class manageUsersController {
         nameColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getName()));
         contactColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getContact()));
         licenseColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getLicenseNo()));
+        emailColumn.setCellValueFactory(cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getEmail()));
 
         // Load users on initialization
         loadUsers();
@@ -52,6 +54,11 @@ public class manageUsersController {
         String email = showInputDialog("User Email", "Enter user's email:");
         if (email == null) return;
         
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            showAlert(AlertType.ERROR, "Invalid Email", "Please enter a valid email address.", "Example: user@example.com");
+            return;
+        }
+        
         String phone = showInputDialog("User Phone", "Enter user's phone number:");
         if (phone == null) return;
         
@@ -60,6 +67,11 @@ public class manageUsersController {
         
         String password = showInputDialog("User Password", "Enter user's password:");
         if (password == null) return;
+        
+        if (name.trim().isEmpty() || email.trim().isEmpty() || phone.trim().isEmpty() || licenseNo.trim().isEmpty()) {
+            showAlert(AlertType.ERROR, "Missing Information", "All fields are required.", "Please fill in name, email, phone, and license number.");
+            return;
+        }
         
         // Insert the new user into the database
         try (Connection conn = DBConnection.getConnection();
@@ -165,7 +177,8 @@ public class manageUsersController {
                         rs.getString("name"),
                         rs.getString("phone"),
                         rs.getString("license_number"),
-                        rs.getString("password_hash")
+                        rs.getString("password_hash"),
+                        rs.getString("email")
                 );
                 userList.add(user);
                 System.out.println("Loaded user: " + user.getName() + ", ID: " + user.getCustomerId());

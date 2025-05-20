@@ -571,37 +571,56 @@ public class adminDashboardController {
             private final Button cancelButton = new Button("Cancel");
 
             {
-                completeButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+                // Make all action buttons wide enough for full text
+                completeButton.setPrefWidth(140);
+                completeButton.setPrefHeight(24);
+                completeButton.setStyle("-fx-font-size: 10px; -fx-background-color: #4CAF50; -fx-text-fill: white;");
+
+                confirmReturnButton.setPrefWidth(140);
+                confirmReturnButton.setPrefHeight(24);
+                confirmReturnButton.setStyle("-fx-font-size: 10px; -fx-background-color: #FF9800; -fx-text-fill: white;");
+
+                waivedLateReturnButton.setPrefWidth(140);
+                waivedLateReturnButton.setPrefHeight(24);
+                waivedLateReturnButton.setStyle("-fx-font-size: 10px; -fx-background-color: #9C27B0; -fx-text-fill: white;");
+
+                chargeLateReturnButton.setPrefWidth(140);
+                chargeLateReturnButton.setPrefHeight(24);
+                chargeLateReturnButton.setStyle("-fx-font-size: 10px; -fx-background-color: #E91E63; -fx-text-fill: white;");
+
+                processButton.setPrefWidth(140);
+                processButton.setPrefHeight(24);
+                processButton.setStyle("-fx-font-size: 10px; -fx-background-color: #2196F3; -fx-text-fill: white;");
+
+                cancelButton.setPrefWidth(140);
+                cancelButton.setPrefHeight(24);
+                cancelButton.setStyle("-fx-font-size: 10px; -fx-background-color: #f44336; -fx-text-fill: white;");
+
                 completeButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     completeBooking(booking);
                 });
 
-                confirmReturnButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white;");
                 confirmReturnButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     confirmOnTimeReturn(booking);
                 });
 
-                waivedLateReturnButton.setStyle("-fx-background-color: #9C27B0; -fx-text-fill: white;");
                 waivedLateReturnButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     confirmLateReturnWithWaivedFee(booking);
                 });
                 
-                chargeLateReturnButton.setStyle("-fx-background-color: #E91E63; -fx-text-fill: white;");
                 chargeLateReturnButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     confirmLateReturnWithCharge(booking);
                 });
 
-                processButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
                 processButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     processPayment(booking);
                 });
 
-                cancelButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
                 cancelButton.setOnAction(e -> {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
                     cancelBooking(booking);
@@ -615,21 +634,20 @@ public class adminDashboardController {
                     setGraphic(null);
                 } else {
                     BookingPaymentData booking = getTableView().getItems().get(getIndex());
-                    HBox buttons = new HBox(5);
+                    HBox buttons = new HBox(10);
+                    buttons.setPadding(new Insets(5, 5, 5, 5));
 
                     if ("Ongoing".equals(booking.bookingStatus)) {
-                        buttons.getChildren().add(completeButton);
-                        buttons.getChildren().add(confirmReturnButton);
-
-                        // Show late return buttons only if there's a late fee to consider
                         if (booking.lateFee > 0) {
                             buttons.getChildren().add(waivedLateReturnButton);
                             buttons.getChildren().add(chargeLateReturnButton);
+                        } else {
+                            buttons.getChildren().add(confirmReturnButton);
                         }
-
-                        buttons.getChildren().add(cancelButton);
+                        if (!"Paid".equals(booking.paymentStatus) && !"Cancelled".equals(booking.bookingStatus)) {
+                            buttons.getChildren().add(cancelButton);
+                        }
                     }
-
                     if (!"Paid".equals(booking.paymentStatus) && !"Cancelled".equals(booking.bookingStatus)) {
                         buttons.getChildren().add(processButton);
                     }
@@ -642,6 +660,8 @@ public class adminDashboardController {
                 }
             }
         });
+
+        bookingsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
     private void loadBookingsWithPaymentInfo() {

@@ -75,7 +75,7 @@
                                     <TableColumn fx:id="lateFeeColumn" text="Late Fee"/>
                                     <TableColumn fx:id="totalAmountColumn" text="Total"/>
                                     <TableColumn fx:id="paymentStatusColumn" text="Payment Status"/>
-                                    <TableColumn fx:id="actionsColumn" text="Actions"/>
+                                    <TableColumn fx:id="actionColumn" text="Actions" minWidth="350" prefWidth="350"/>
                                 </columns>
                             </TableView>
                         </VBox>

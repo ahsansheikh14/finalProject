@@ -27,6 +27,7 @@
             <TableColumn fx:id="nameColumn" text="Name"/>
             <TableColumn fx:id="contactColumn" text="Contact"/>
             <TableColumn fx:id="licenseColumn" text="License No"/>
+            <TableColumn fx:id="emailColumn" text="Email"/>
         </columns>
     </TableView>
 

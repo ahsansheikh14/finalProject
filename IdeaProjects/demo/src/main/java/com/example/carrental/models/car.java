@@ -57,7 +57,6 @@ public class car {
     public void setSeats(int seats) { this.seats.set(seats); }
     
     public boolean isSpecial() { return special.get(); }
-    public boolean getSpecial() { return special.get(); }
     public SimpleBooleanProperty specialProperty() { return special; }
     public void setSpecial(boolean special) { this.special.set(special); }
 }
